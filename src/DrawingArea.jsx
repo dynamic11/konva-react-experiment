@@ -3,7 +3,7 @@ import { Stage, Layer, Rect } from "react-konva";
 import ScanImage from "./ScanImage";
 import HighlightArea from "./HighlightArea";
 import ZoneBox from "./ZoneBox";
-
+import ToolSelector from "./ToolSelector";
 import InfoModal from "./InfoModal";
 
 const RectangleDrawing = () => {
@@ -14,6 +14,11 @@ const RectangleDrawing = () => {
   const [currentPos, setCurrentPos] = useState({ x: 0, y: 0 });
   // const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedShape, setSelectedShape] = useState(null);
+  const [drawTool, setDrawTool] = React.useState("area");
+
+  const handleChange = (event) => {
+    setDrawTool(event.target.value);
+  };
 
   const handleCloseModal = () => {
     setSelectedShape(null);
@@ -65,6 +70,7 @@ const RectangleDrawing = () => {
 
   return (
     <>
+      <ToolSelector selectedTool={drawTool} onSelect={handleChange} />
       <Stage
         width={window.innerWidth}
         height={window.innerHeight}
