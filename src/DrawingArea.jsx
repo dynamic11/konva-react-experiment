@@ -6,6 +6,7 @@ import ZoneBox from "./ZoneBox";
 import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
 import Popover from "@mui/material/Popover";
+import Box from "@mui/material/Box";
 
 const RectangleDrawing = () => {
   const stageRef = useRef(null);
@@ -94,6 +95,7 @@ const RectangleDrawing = () => {
               width={rect.width}
               height={rect.height}
               onClick={onSquareClick}
+              isSelected={selectedShape && selectedShape.dataId === index}
             />
           ))}
           {drawing && (
@@ -124,14 +126,14 @@ const RectangleDrawing = () => {
             horizontal: "left",
           }}
         >
-          <div>
+          <Box sx={{ width: 200, p: 2 }}>
             <Typography variant="h5">Modal Content</Typography>
             <Typography>
               This is the content of the modal that appears when clicking the
               shape.
             </Typography>
             <Typography>Selected shape: {selectedShape.dataId}</Typography>
-          </div>
+          </Box>
         </Popover>
       )}
 
