@@ -2,30 +2,21 @@ import React, { useState } from "react";
 import { Rect } from "react-konva";
 
 // the first very simple and recommended way:
-const ZoneBox = ({ x, y, width, height, dataID, onClick }) => {
+const ZoneBox = ({ x, y, width, height }) => {
   const [isHovered, setIsHovered] = useState(false);
-
-  const handleShapeClick = (e) => {
-    const shapePosition = e.target.getAbsolutePosition();
-    const shapeAttr = e.target.attrs;
-    onClick({
-      dataID: dataID,
-      x: shapePosition.x,
-      y: shapePosition.y,
-      width: shapeAttr.width,
-      height: shapeAttr.height,
-    });
-  };
 
   const handleShapeMouseEnter = (e) => {
     e.target.getStage().container().style.cursor = "pointer";
     setIsHovered(true);
+    console.log("uppppp");
   };
 
   const handleShapeMouseLeave = (e) => {
     e.target.getStage().container().style.cursor = "default";
     setIsHovered(false);
   };
+
+  console.log("uppppp");
   return (
     <Rect
       x={x}
@@ -36,7 +27,6 @@ const ZoneBox = ({ x, y, width, height, dataID, onClick }) => {
       strokeWidth={isHovered ? 5 : 3}
       onMouseEnter={handleShapeMouseEnter}
       onMouseLeave={handleShapeMouseLeave}
-      onClick={handleShapeClick}
     />
   );
 };

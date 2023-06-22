@@ -3,6 +3,9 @@ import { Stage, Layer, Rect } from "react-konva";
 import ScanImage from "./ScanImage";
 import HighlightArea from "./HighlightArea";
 import ZoneBox from "./ZoneBox";
+import Modal from "@mui/material/Modal";
+import Typography from "@mui/material/Typography";
+import Popover from "@mui/material/Popover";
 
 const RectangleDrawing = () => {
   const stageRef = useRef(null);
@@ -10,6 +13,12 @@ const RectangleDrawing = () => {
   const [drawing, setDrawing] = useState(false);
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
   const [currentPos, setCurrentPos] = useState({ x: 0, y: 0 });
+  // const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedShape, setSelectedShape] = useState(null);
+
+  const handleCloseModal = () => {
+    setSelectedShape(null);
+  };
 
   const handleMouseDown = (e) => {
     const { offsetX, offsetY } = e.evt;
@@ -44,6 +53,11 @@ const RectangleDrawing = () => {
     }
   };
 
+  const onSquareClick = (data) => {
+    setSelectedShape(data);
+    console.log("yo", data);
+  };
+
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
     return () => {
@@ -74,10 +88,12 @@ const RectangleDrawing = () => {
           {rectangles.map((rect, index) => (
             <ZoneBox
               key={index}
+              dataId={index}
               x={rect.x}
               y={rect.y}
               width={rect.width}
               height={rect.height}
+              onClick={onSquareClick}
             />
           ))}
           {drawing && (
@@ -90,6 +106,35 @@ const RectangleDrawing = () => {
           )}
         </Layer>
       </Stage>
+      {selectedShape && (
+        <Popover
+          open={!!selectedShape}
+          onClose={handleCloseModal}
+          anchorPosition={{
+            top: selectedShape.y,
+            left: selectedShape.x + selectedShape.width,
+          }}
+          anchorReference="anchorPosition"
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "left",
+          }}
+        >
+          <div>
+            <Typography variant="h5">Modal Content</Typography>
+            <Typography>
+              This is the content of the modal that appears when clicking the
+              shape.
+            </Typography>
+            <Typography>Selected shape: {selectedShape.id}</Typography>
+          </div>
+        </Popover>
+      )}
+
       <button onClick={() => setRectangles([])}>clear</button>
     </>
   );
