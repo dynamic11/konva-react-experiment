@@ -112,7 +112,7 @@ const RectangleDrawing = () => {
           onClose={handleCloseModal}
           anchorPosition={{
             top: selectedShape.y,
-            left: selectedShape.x + selectedShape.width,
+            left: selectedShape.x + selectedShape.width + 20,
           }}
           anchorReference="anchorPosition"
           anchorOrigin={{
@@ -130,12 +130,14 @@ const RectangleDrawing = () => {
               This is the content of the modal that appears when clicking the
               shape.
             </Typography>
-            <Typography>Selected shape: {selectedShape.id}</Typography>
+            <Typography>Selected shape: {selectedShape.dataId}</Typography>
           </div>
         </Popover>
       )}
 
-      <button onClick={() => setRectangles([])}>clear</button>
+      {/* <button onClick={() => setRectangles([])} sx={{ my: 5 }}>
+        clear
+      </button> */}
     </>
   );
 };

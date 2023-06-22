@@ -2,14 +2,15 @@ import React, { useState } from "react";
 import { Rect } from "react-konva";
 
 // the first very simple and recommended way:
-const ZoneBox = ({ x, y, width, height, dataID, onClick }) => {
+const ZoneBox = ({ x, y, width, height, dataId, onClick }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleShapeClick = (e) => {
     const shapePosition = e.target.getAbsolutePosition();
+    console.log(shapePosition, e.target);
     const shapeAttr = e.target.attrs;
     onClick({
-      dataID: dataID,
+      dataId: dataId,
       x: shapePosition.x,
       y: shapePosition.y,
       width: shapeAttr.width,
