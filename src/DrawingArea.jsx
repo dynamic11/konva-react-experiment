@@ -3,10 +3,8 @@ import { Stage, Layer, Rect } from "react-konva";
 import ScanImage from "./ScanImage";
 import HighlightArea from "./HighlightArea";
 import ZoneBox from "./ZoneBox";
-import Modal from "@mui/material/Modal";
-import Typography from "@mui/material/Typography";
-import Popover from "@mui/material/Popover";
-import Box from "@mui/material/Box";
+
+import InfoModal from "./InfoModal";
 
 const RectangleDrawing = () => {
   const stageRef = useRef(null);
@@ -56,7 +54,6 @@ const RectangleDrawing = () => {
 
   const onSquareClick = (data) => {
     setSelectedShape(data);
-    console.log("yo", data);
   };
 
   useEffect(() => {
@@ -109,32 +106,13 @@ const RectangleDrawing = () => {
         </Layer>
       </Stage>
       {selectedShape && (
-        <Popover
-          open={!!selectedShape}
-          onClose={handleCloseModal}
-          anchorPosition={{
-            top: selectedShape.y,
-            left: selectedShape.x + selectedShape.width + 20,
-          }}
-          anchorReference="anchorPosition"
-          anchorOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "left",
-          }}
-        >
-          <Box sx={{ width: 200, p: 2 }}>
-            <Typography variant="h5">Modal Content</Typography>
-            <Typography>
-              This is the content of the modal that appears when clicking the
-              shape.
-            </Typography>
-            <Typography>Selected shape: {selectedShape.dataId}</Typography>
-          </Box>
-        </Popover>
+        <InfoModal
+          data={selectedShape}
+          isOpen={!!selectedShape}
+          handleCloseModal={handleCloseModal}
+          xPosition={selectedShape.x + selectedShape.width + 20}
+          yPosition={selectedShape.y}
+        />
       )}
 
       {/* <button onClick={() => setRectangles([])} sx={{ my: 5 }}>
