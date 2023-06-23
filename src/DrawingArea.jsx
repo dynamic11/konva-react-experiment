@@ -5,6 +5,8 @@ import HighlightArea from "./HighlightArea";
 import ZoneBox from "./ZoneBox";
 import ToolSelector from "./ToolSelector";
 import InfoModal from "./InfoModal";
+import remove from "lodash/remove";
+import uniqueId from "lodash/uniqueId";
 
 const RectangleDrawing = () => {
   const stageRef = useRef(null);
@@ -24,6 +26,19 @@ const RectangleDrawing = () => {
     setSelectedShape(null);
   };
 
+  const handleDeleteZone = (idToDelete) => {
+    const cleanedRectangles = rectangles;
+    remove(cleanedRectangles, { id: idToDelete });
+    setSelectedShape(cleanedRectangles);
+    setSelectedShape(null);
+    console.log(
+      selectedShape.dataId,
+      idToDelete,
+      rectangles,
+      cleanedRectangles
+    );
+  };
+
   const handleMouseDown = (e) => {
     const { offsetX, offsetY } = e.evt;
     setStartPos({ x: offsetX, y: offsetY });
@@ -39,7 +54,13 @@ const RectangleDrawing = () => {
     const height = offsetY - startPos.y;
 
     const newRectangles = [...rectangles];
-    newRectangles.push({ x: startPos.x, y: startPos.y, width, height });
+    newRectangles.push({
+      id: uniqueId(),
+      x: startPos.x,
+      y: startPos.y,
+      width,
+      height,
+    });
     setRectangles(newRectangles);
   };
 
@@ -68,6 +89,9 @@ const RectangleDrawing = () => {
     };
   }, []);
 
+  console.log("rectangles", rectangles);
+  console.log("selectedShape", selectedShape);
+
   return (
     <>
       <ToolSelector selectedTool={drawTool} onSelect={handleChange} />
@@ -92,11 +116,7 @@ const RectangleDrawing = () => {
           {rectangles.map((rect, index) => (
             <ZoneBox
               key={index}
-              dataId={index}
-              x={rect.x}
-              y={rect.y}
-              width={rect.width}
-              height={rect.height}
+              shape={rect}
               onClick={onSquareClick}
               isSelected={selectedShape && selectedShape.dataId === index}
             />
@@ -118,6 +138,7 @@ const RectangleDrawing = () => {
           handleCloseModal={handleCloseModal}
           xPosition={selectedShape.x + selectedShape.width + 20}
           yPosition={selectedShape.y}
+          onDeleteZone={handleDeleteZone}
         />
       )}
 

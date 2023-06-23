@@ -2,15 +2,20 @@ import React from "react";
 import Typography from "@mui/material/Typography";
 import Popover from "@mui/material/Popover";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 
 // the first very simple and recommended way:
 const InfoModal = ({
   isOpen,
   handleCloseModal,
+  onDeleteZone,
   yPosition,
   xPosition,
   data,
 }) => {
+  const onDelete = () => {
+    onDeleteZone(data.dataId);
+  };
   return (
     <Popover
       open={isOpen}
@@ -35,6 +40,9 @@ const InfoModal = ({
           This is the content of the modal that appears when clicking the shape.
         </Typography>
         <Typography>Selected shape: {data.dataId}</Typography>
+        <Button color="error" variant="contained" onClick={onDelete}>
+          Delete
+        </Button>
       </Box>
     </Popover>
   );
