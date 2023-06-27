@@ -7,6 +7,8 @@ import ToolSelector from "./ToolSelector";
 import InfoModal from "./InfoModal";
 import remove from "lodash/remove";
 import uniqueId from "lodash/uniqueId";
+import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
 
 const RectangleDrawing = () => {
   const stageRef = useRef(null);
@@ -14,7 +16,6 @@ const RectangleDrawing = () => {
   const [drawing, setDrawing] = useState(false);
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
   const [currentPos, setCurrentPos] = useState({ x: 0, y: 0 });
-  // const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedShape, setSelectedShape] = useState(null);
   const [drawTool, setDrawTool] = React.useState("area");
 
@@ -31,12 +32,6 @@ const RectangleDrawing = () => {
     remove(cleanedRectangles, { id: idToDelete });
     setSelectedShape(cleanedRectangles);
     setSelectedShape(null);
-    console.log(
-      selectedShape.dataId,
-      idToDelete,
-      rectangles,
-      cleanedRectangles
-    );
   };
 
   const handleMouseDown = (e) => {
@@ -78,7 +73,7 @@ const RectangleDrawing = () => {
     }
   };
 
-  const onSquareClick = (data) => {
+  const onZoneClick = (data) => {
     setSelectedShape(data);
   };
 
@@ -89,12 +84,19 @@ const RectangleDrawing = () => {
     };
   }, []);
 
-  console.log("rectangles", rectangles);
-  console.log("selectedShape", selectedShape);
-
   return (
     <>
-      <ToolSelector selectedTool={drawTool} onSelect={handleChange} />
+      <Stack direction="row" spacing={2}>
+        <ToolSelector selectedTool={drawTool} onSelect={handleChange} />
+        <Button
+          onClick={() => setRectangles([])}
+          sx={{ my: 5 }}
+          variant="contained"
+        >
+          clear
+        </Button>
+      </Stack>
+
       <Stage
         width={window.innerWidth}
         height={window.innerHeight}
@@ -113,14 +115,16 @@ const RectangleDrawing = () => {
           />
         </Layer>
         <Layer>
+          {/* Draw rectangles */}
           {rectangles.map((rect, index) => (
             <ZoneBox
               key={index}
               shape={rect}
-              onClick={onSquareClick}
+              onClick={onZoneClick}
               isSelected={selectedShape && selectedShape.dataId === index}
             />
           ))}
+          {/* Draw highlighted area on mouse drag */}
           {drawing && (
             <HighlightArea
               x={startPos.x}
@@ -141,10 +145,6 @@ const RectangleDrawing = () => {
           onDeleteZone={handleDeleteZone}
         />
       )}
-
-      {/* <button onClick={() => setRectangles([])} sx={{ my: 5 }}>
-        clear
-      </button> */}
     </>
   );
 };

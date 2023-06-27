@@ -17,6 +17,7 @@ const ToolSelector = ({ selectedTool, onSelect }) => {
           value={selectedTool}
           label="Age"
           onChange={onSelect}
+          size="small"
         >
           <MenuItem value={"area"}>Area</MenuItem>
           <MenuItem value={"line"}>Line</MenuItem>
