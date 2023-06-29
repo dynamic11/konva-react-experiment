@@ -8,7 +8,16 @@ import InfoModal from "./InfoModal";
 import remove from "lodash/remove";
 import uniqueId from "lodash/uniqueId";
 import Stack from "@mui/material/Stack";
+import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
+import TableContainer from "@mui/material/TableContainer";
+import Table from "@mui/material/Table";
+import TableRow from "@mui/material/TableRow";
+import TableHead from "@mui/material/TableHead";
+import TableCell from "@mui/material/TableCell";
+import TableBody from "@mui/material/TableBody";
+import Grid from "@mui/material/Grid";
 
 const RectangleDrawing = () => {
   const stageRef = useRef(null);
@@ -85,56 +94,98 @@ const RectangleDrawing = () => {
   }, []);
 
   return (
-    <>
-      <Stack direction="row" spacing={2}>
-        <ToolSelector selectedTool={drawTool} onSelect={handleChange} />
-        <Button
-          onClick={() => setRectangles([])}
-          sx={{ my: 5 }}
-          variant="contained"
-        >
-          clear
-        </Button>
-      </Stack>
+    <Box sx={{ py: 1 }}>
+      <h1>Image annotation tool</h1>
+      <Grid container spacing={2}>
+        <Grid item xs={7} sx={{ textAlign: "center" }}>
+          <Paper sx={{ backgroundColor: "#2A2727" }} elevation={3}>
+            <img
+              src="https://images.pexels.com/photos/16514723/pexels-photo-16514723/free-photo-of-photo-of-colored-sewing-threads.jpeg"
+              sx={{ maxWidth: 200, width: 100, display: "block" }}
+            />
+            <Stage
+              width={400}
+              height={400}
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              ref={stageRef}
+            >
+              {/* <Layer>
+                <ScanImage
+                  src="https://images.pexels.com/photos/16514723/pexels-photo-16514723/free-photo-of-photo-of-colored-sewing-threads.jpeg"
+                  x={0}
+                  y={0}
+                  width={stageRef.current?.width()}
+                  height={stageRef.current?.height()}
+                />
+              </Layer> */}
+              <Layer>
+                {/* Draw rectangles */}
+                {rectangles.map((rect, index) => (
+                  <ZoneBox
+                    key={index}
+                    shape={rect}
+                    onClick={onZoneClick}
+                    isSelected={selectedShape && selectedShape.dataId === index}
+                  />
+                ))}
+                {/* Draw highlighted area on mouse drag */}
+                {drawing && (
+                  <HighlightArea
+                    x={startPos.x}
+                    y={startPos.y}
+                    width={currentPos.x - startPos.x}
+                    height={currentPos.y - startPos.y}
+                  />
+                )}
+              </Layer>
+            </Stage>
+          </Paper>
+        </Grid>
 
-      <Stage
-        width={window.innerWidth}
-        height={window.innerHeight}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        ref={stageRef}
-      >
-        <Layer>
-          <ScanImage
-            src="https://konvajs.org/assets/yoda.jpg"
-            x={0}
-            y={0}
-            width={stageRef.current?.width()}
-            height={stageRef.current?.height()}
-          />
-        </Layer>
-        <Layer>
-          {/* Draw rectangles */}
-          {rectangles.map((rect, index) => (
-            <ZoneBox
-              key={index}
-              shape={rect}
-              onClick={onZoneClick}
-              isSelected={selectedShape && selectedShape.dataId === index}
-            />
-          ))}
-          {/* Draw highlighted area on mouse drag */}
-          {drawing && (
-            <HighlightArea
-              x={startPos.x}
-              y={startPos.y}
-              width={currentPos.x - startPos.x}
-              height={currentPos.y - startPos.y}
-            />
-          )}
-        </Layer>
-      </Stage>
+        <Grid item xs={5}>
+          <Stack spacing={2}>
+            <Paper sx={{ p: 3 }}>
+              <ToolSelector selectedTool={drawTool} onSelect={handleChange} />
+              <Button
+                onClick={() => setRectangles([])}
+                sx={{ my: 5 }}
+                variant="contained"
+              >
+                clear
+              </Button>
+            </Paper>
+            <TableContainer component={Paper} elevation={3}>
+              <Table sx={{ minWidth: "100%" }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Index</TableCell>
+                    <TableCell align="right">ID</TableCell>
+                    <TableCell align="right">X</TableCell>
+                    <TableCell align="right">Y</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {rectangles.map((rectangle, index) => (
+                    <TableRow
+                      key={index}
+                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                    >
+                      <TableCell component="th" scope="row">
+                        {index}
+                      </TableCell>
+                      <TableCell align="right">{rectangle.id}</TableCell>
+                      <TableCell align="right">{rectangle.x}</TableCell>
+                      <TableCell align="right">{rectangle.y}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Stack>
+        </Grid>
+      </Grid>
       {selectedShape && (
         <InfoModal
           data={selectedShape}
@@ -145,7 +196,7 @@ const RectangleDrawing = () => {
           onDeleteZone={handleDeleteZone}
         />
       )}
-    </>
+    </Box>
   );
 };
 
