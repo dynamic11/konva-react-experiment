@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Rect } from "react-konva";
 
-// the first very simple and recommended way:
 const ZoneBox = ({ x, y, width, height }) => {
   const [isHovered, setIsHovered] = useState(false);
 

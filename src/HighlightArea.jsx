@@ -2,7 +2,6 @@ import React from "react";
 import { Rect } from "react-konva";
 import useImage from "use-image";
 
-// the first very simple and recommended way:
 const HighlightArea = ({ x, y, width, height }) => {
   return (
     <Rect

@@ -3,35 +3,33 @@ import { Stage, Layer, Rect } from "react-konva";
 import ScanImage from "./ScanImage";
 import HighlightArea from "./HighlightArea";
 import ZoneBox from "./ZoneBox";
-import ToolSelector from "./ToolSelector";
+
 import InfoModal from "./InfoModal";
 import remove from "lodash/remove";
 import uniqueId from "lodash/uniqueId";
 import Stack from "@mui/material/Stack";
 import Paper from "@mui/material/Paper";
-import Button from "@mui/material/Button";
+
 import Box from "@mui/material/Box";
-import TableContainer from "@mui/material/TableContainer";
-import Table from "@mui/material/Table";
-import TableRow from "@mui/material/TableRow";
-import TableHead from "@mui/material/TableHead";
-import TableCell from "@mui/material/TableCell";
-import TableBody from "@mui/material/TableBody";
+
 import Grid from "@mui/material/Grid";
+
+import ShapeTable from "./ShapeTable";
+import DrawTools from "./DrawTools";
+
+const CANVAS_DIM = 500;
 
 const RectangleDrawing = () => {
   const stageRef = useRef(null);
-  const imageContinerRef = useRef(null);
   const [rectangles, setRectangles] = useState([]);
   const [drawing, setDrawing] = useState(false);
+  const [isDrawingEnabled, setIsDrawingEnabled] = useState(false);
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
   const [currentPos, setCurrentPos] = useState({ x: 0, y: 0 });
   const [selectedShape, setSelectedShape] = useState(null);
   const [drawTool, setDrawTool] = React.useState("area");
 
-  const CANVAS_DIM = 500;
-
-  const handleChange = (event) => {
+  const handleToolChange = (event) => {
     setDrawTool(event.target.value);
   };
 
@@ -47,9 +45,11 @@ const RectangleDrawing = () => {
   };
 
   const handleMouseDown = (e) => {
-    const { offsetX, offsetY } = e.evt;
-    setStartPos({ x: offsetX, y: offsetY });
-    setDrawing(true);
+    if (isDrawingEnabled) {
+      const { offsetX, offsetY } = e.evt;
+      setStartPos({ x: offsetX, y: offsetY });
+      setDrawing(true);
+    }
   };
 
   const handleMouseUp = (e) => {
@@ -59,16 +59,17 @@ const RectangleDrawing = () => {
     const { offsetX, offsetY } = e.evt;
     const width = offsetX - startPos.x;
     const height = offsetY - startPos.y;
-
-    const newRectangles = [...rectangles];
-    newRectangles.push({
-      id: uniqueId(),
-      x: startPos.x,
-      y: startPos.y,
-      width,
-      height,
-    });
-    setRectangles(newRectangles);
+    if (Math.abs(width) > 2 && Math.abs(height) > 2) {
+      const newRectangles = [...rectangles];
+      newRectangles.push({
+        id: uniqueId(),
+        x: startPos.x,
+        y: startPos.y,
+        width,
+        height,
+      });
+      setRectangles(newRectangles);
+    }
   };
 
   const handleMouseMove = (e) => {
@@ -96,6 +97,11 @@ const RectangleDrawing = () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
+
+  const handleDrawToggle = (event) => {
+    setIsDrawingEnabled(event.target.checked);
+    setStartPos({});
+  };
 
   return (
     <Box sx={{ py: 1 }}>
@@ -164,43 +170,14 @@ const RectangleDrawing = () => {
 
         <Grid item xs={4}>
           <Stack spacing={2}>
-            <Paper sx={{ p: 3 }}>
-              <ToolSelector selectedTool={drawTool} onSelect={handleChange} />
-              <Button
-                onClick={() => setRectangles([])}
-                sx={{ my: 5 }}
-                variant="contained"
-              >
-                clear
-              </Button>
-            </Paper>
-            <TableContainer component={Paper} elevation={3}>
-              <Table sx={{ minWidth: "100%" }} aria-label="simple table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Index</TableCell>
-                    <TableCell align="right">ID</TableCell>
-                    <TableCell align="right">X</TableCell>
-                    <TableCell align="right">Y</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {rectangles.map((rectangle, index) => (
-                    <TableRow
-                      key={index}
-                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                    >
-                      <TableCell component="th" scope="row">
-                        {index}
-                      </TableCell>
-                      <TableCell align="right">{rectangle.id}</TableCell>
-                      <TableCell align="right">{rectangle.x}</TableCell>
-                      <TableCell align="right">{rectangle.y}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+            <DrawTools
+              onDrawToggle={handleDrawToggle}
+              isDrawing={isDrawingEnabled}
+              onClear={() => setRectables([])}
+              selectedDrawTool={drawTool}
+              onToolSelect={handleToolChange}
+            />
+            <ShapeTable data={rectangles} />
           </Stack>
         </Grid>
       </Grid>

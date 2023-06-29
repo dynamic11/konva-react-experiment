@@ -4,7 +4,6 @@ import Popover from "@mui/material/Popover";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 
-// the first very simple and recommended way:
 const InfoModal = ({
   isOpen,
   handleCloseModal,
