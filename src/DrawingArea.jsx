@@ -21,12 +21,15 @@ import Grid from "@mui/material/Grid";
 
 const RectangleDrawing = () => {
   const stageRef = useRef(null);
+  const imageContinerRef = useRef(null);
   const [rectangles, setRectangles] = useState([]);
   const [drawing, setDrawing] = useState(false);
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
   const [currentPos, setCurrentPos] = useState({ x: 0, y: 0 });
   const [selectedShape, setSelectedShape] = useState(null);
   const [drawTool, setDrawTool] = React.useState("area");
+
+  const CANVAS_DIM = 500;
 
   const handleChange = (event) => {
     setDrawTool(event.target.value);
@@ -83,6 +86,7 @@ const RectangleDrawing = () => {
   };
 
   const onZoneClick = (data) => {
+    setDrawing(false);
     setSelectedShape(data);
   };
 
@@ -97,54 +101,68 @@ const RectangleDrawing = () => {
     <Box sx={{ py: 1 }}>
       <h1>Image annotation tool</h1>
       <Grid container spacing={2}>
-        <Grid item xs={7} sx={{ textAlign: "center" }}>
-          <Paper sx={{ backgroundColor: "#2A2727" }} elevation={3}>
-            <img
-              src="https://images.pexels.com/photos/16514723/pexels-photo-16514723/free-photo-of-photo-of-colored-sewing-threads.jpeg"
-              sx={{ maxWidth: 200, width: 100, display: "block" }}
-            />
-            <Stage
-              width={400}
-              height={400}
-              onMouseDown={handleMouseDown}
-              onMouseMove={handleMouseMove}
-              onMouseUp={handleMouseUp}
-              ref={stageRef}
+        <Grid item xs={8} sx={{ textAlign: "center" }}>
+          <Paper
+            sx={{
+              backgroundColor: "#2A2727",
+              py: 3,
+              position: "relative",
+              height: "auto",
+            }}
+            elevation={3}
+          >
+            <Paper
+              elevation={3}
+              sx={{
+                mx: "auto",
+                maxWidth: "fit-content",
+              }}
             >
-              {/* <Layer>
-                <ScanImage
-                  src="https://images.pexels.com/photos/16514723/pexels-photo-16514723/free-photo-of-photo-of-colored-sewing-threads.jpeg"
-                  x={0}
-                  y={0}
-                  width={stageRef.current?.width()}
-                  height={stageRef.current?.height()}
-                />
-              </Layer> */}
-              <Layer>
-                {/* Draw rectangles */}
-                {rectangles.map((rect, index) => (
-                  <ZoneBox
-                    key={index}
-                    shape={rect}
-                    onClick={onZoneClick}
-                    isSelected={selectedShape && selectedShape.dataId === index}
+              <Stage
+                width={CANVAS_DIM}
+                height={CANVAS_DIM}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                ref={stageRef}
+              >
+                <Layer>
+                  <ScanImage
+                    src="https://images.pexels.com/photos/16514723/pexels-photo-16514723/free-photo-of-photo-of-colored-sewing-threads.jpeg"
+                    x={0}
+                    y={0}
+                    width={CANVAS_DIM}
+                    height={CANVAS_DIM}
                   />
-                ))}
-                {/* Draw highlighted area on mouse drag */}
-                {drawing && (
-                  <HighlightArea
-                    x={startPos.x}
-                    y={startPos.y}
-                    width={currentPos.x - startPos.x}
-                    height={currentPos.y - startPos.y}
-                  />
-                )}
-              </Layer>
-            </Stage>
+                </Layer>
+                <Layer>
+                  {/* Draw rectangles */}
+                  {rectangles.map((rect, index) => (
+                    <ZoneBox
+                      key={index}
+                      shape={rect}
+                      onClick={onZoneClick}
+                      isSelected={
+                        selectedShape && selectedShape.dataId === index
+                      }
+                    />
+                  ))}
+                  {/* Draw highlighted area on mouse drag */}
+                  {drawing && (
+                    <HighlightArea
+                      x={startPos.x}
+                      y={startPos.y}
+                      width={currentPos.x - startPos.x}
+                      height={currentPos.y - startPos.y}
+                    />
+                  )}
+                </Layer>
+              </Stage>
+            </Paper>
           </Paper>
         </Grid>
 
-        <Grid item xs={5}>
+        <Grid item xs={4}>
           <Stack spacing={2}>
             <Paper sx={{ p: 3 }}>
               <ToolSelector selectedTool={drawTool} onSelect={handleChange} />
